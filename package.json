@@ -1,0 +1,13 @@
+{
+  "name": "ml-incident-copilot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An evidence-first conversational assistant for investigating synthetic ML incidents.",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test",
+    "evaluate": "node evaluate.mjs"
+  },
+  "engines": {"node": ">=22"}
+}
