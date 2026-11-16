@@ -1,16 +1,18 @@
+import { readFileSync } from 'node:fs';
 import { chat } from '../src/copilot.mjs';
 
-const cases = [
-  { incident: 'launch', message: 'Check feature drift', intent: 'drift', diagnosis: 'drift', citations: ['metrics/drift'] },
-  { incident: 'pipeline', message: 'Show pipeline logs', intent: 'logs', diagnosis: 'pipeline', citations: ['logs/pipeline'] },
-  { incident: 'relationship', message: 'Compare the candidate', intent: 'compare', diagnosis: 'relationship', citations: ['models/validation'] },
-  { incident: 'healthy', message: 'What is the capital of France?', intent: 'clarify', diagnosis: 'healthy', citations: [] },
-];
+const cases = JSON.parse(readFileSync(new URL('./cases.json', import.meta.url), 'utf8'));
 
 const demo = process.argv.includes('--simulate-regression');
 let failures = 0;
 for (const fixture of cases) {
-  const result = chat(fixture);
+  const { incident, message, prior_question } = fixture;
+  const history = [];
+  if (prior_question) {
+    const prior = chat({ incident, message: prior_question });
+    history.push({ role: 'user', content: prior_question }, { role: 'assistant', content: prior.answer });
+  }
+  const result = chat({ incident, message, history });
   if (demo && fixture.incident === 'launch') {
     result.answer = result.answer.replace('[metrics/drift]', '');
   }
@@ -25,6 +27,8 @@ for (const fixture of cases) {
   for (const id of cited) {
     if (!available.has(id)) problems.push('unknown citation ' + id);
   }
+  if (fixture.intent === 'clarify' && cited.length) problems.push('unexpected citation in clarification');
+  if (result.action_performed) problems.push('unexpected action');
   if (problems.length) failures++;
   console.log([problems.length ? 'FAIL' : 'PASS', fixture.message, ...problems].join(' | '));
 }

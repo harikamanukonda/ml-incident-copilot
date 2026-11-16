@@ -1,0 +1,46 @@
+[
+  {
+    "incident": "launch",
+    "message": "Check feature drift",
+    "intent": "drift",
+    "diagnosis": "drift",
+    "citations": [
+      "metrics/drift"
+    ]
+  },
+  {
+    "incident": "pipeline",
+    "message": "Show pipeline logs",
+    "intent": "logs",
+    "diagnosis": "pipeline",
+    "citations": [
+      "logs/pipeline"
+    ]
+  },
+  {
+    "incident": "pipeline",
+    "message": "What should I check next?",
+    "intent": "next",
+    "diagnosis": "pipeline",
+    "citations": [
+      "runbook/pipeline"
+    ],
+    "prior_question": "Show pipeline logs"
+  },
+  {
+    "incident": "relationship",
+    "message": "Compare the candidate",
+    "intent": "compare",
+    "diagnosis": "relationship",
+    "citations": [
+      "models/validation"
+    ]
+  },
+  {
+    "incident": "healthy",
+    "message": "What is the capital of France?",
+    "intent": "clarify",
+    "diagnosis": "healthy",
+    "citations": []
+  }
+]
